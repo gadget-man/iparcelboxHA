@@ -1,0 +1,7 @@
+{
+  "name": "iParcelBox",
+  "country": "GB",
+  "domains": ["sensor"],
+  "iot_class": ["Local Push"],
+  "content_in_root": true
+}

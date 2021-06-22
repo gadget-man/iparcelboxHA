@@ -1,0 +1,32 @@
+{
+  "config": {
+    "flow_title": "{name} ({mac})",
+    "step": {
+      "user": {
+        "title" : "[%key:common::config_flow::title%]",
+        "data": {
+          "mac": "[%key:common::config_flow::data::mac%]",
+          "password": "[%key:common::config_flow::data::password%]",
+          "serial": "[%key:common::config_flow::data::serial%]"
+        }
+      },
+      "link": {
+        "title" : "[%key:common::config_flow::title%]",
+        "description": "[%key:common::config_flow::description%]",
+        "data": {
+          "password": "[%key:common::config_flow::data::password%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "not_licenced": "[%key:common::config_flow::error::not_licenced%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "not_licenced": "[%key:common::config_flow::error::not_licenced%]"
+    }
+  }
+}

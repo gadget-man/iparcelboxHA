@@ -1,0 +1,34 @@
+# Describes the format for available alarm control panel services
+
+allowdelivery:
+  name: Allow Delivery
+  description: Allow a parcel delivery.
+  fields:
+    serial:
+      name: Serial
+      description: Serial of the iParcelbox to allow Delivery; required when multiple devices are configured.
+      example: 123456789
+      selector:
+        text:
+
+emptybox:
+  name: Empty Box
+  description: Unlock iParcelBox for emptying.
+  fields:
+    serial:
+      name: Serial
+      description: Serial of the iParcelbox to empty; required when multiple devices are configured.
+      example: 123456789
+      selector:
+        text:
+
+lockbox:
+  name: Lock Box
+  description: Lock iParcelBox and cancel current action.
+  fields:
+    serial:
+      name: Serial
+      description: Serial of the iParcelbox to lock; required when multiple devices are configured.
+      example: 123456789
+      selector:
+        text:
