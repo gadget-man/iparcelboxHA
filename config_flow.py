@@ -131,7 +131,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.debug(err.response.status_code)
             if err.response.status_code == HTTP_UNAUTHORIZED:
                 errors["base"] = "invalid_auth"
-            errors[CONF_HOST] = "cannot_connect"
+            errors["base"] = "cannot_connect"
         except OSError as err:
             errors["base"] = "cannot_connect"
 

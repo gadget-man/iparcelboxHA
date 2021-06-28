@@ -2,7 +2,7 @@
   "domain": "iparcelbox",
   "name": "iParcelBox",
   "config_flow": true,
-  "version":"0.0.1",
+  "version":"0.0.2",
   "documentation": "https://github.com/gadget-man/iparcelboxHA",
   "requirements": ["iparcelboxpy==0.0.1"],
   "ssdp": [],

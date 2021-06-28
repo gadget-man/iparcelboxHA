@@ -34,6 +34,7 @@ from .const import (
     IPARCELBOX,
     IPARCELBOX_INFO,
     IPARCELBOX_API,
+    PLATFORMS,
     IPARCELBOX_INFO_KEY_FIRMWARE,
     CONF_SERIAL,
     CONF_WEBHOOK_URL,
@@ -47,11 +48,8 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["sensor"]
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up iParcelBox (Beta) from a config entry."""
+    """Set up iParcelBox from a config entry."""
     config_updates = {}
     
     if not DOMAIN in hass.data:
@@ -59,8 +57,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     iparcelbox_config = entry.data
     config_entry_id = entry.entry_id
-    # _LOGGER.debug("Setup iParcelBox with id: %s",config_entry_id)
     name = iparcelbox_config[CONF_NAME]
+    _LOGGER.debug("Setup iParcelBox : %s",name)
+
     hostname = iparcelbox_config[CONF_HOST]
     serial = iparcelbox_config[CONF_SERIAL]
     mac = iparcelbox_config[CONF_MAC]
@@ -189,6 +188,7 @@ async def async_webhook_handler(
 
     body = await request.json()
     _LOGGER.debug("Webhook RCPT %s: %s", body["device"], body["message"])
+    # _LOGGER.debug(body["data"])
     async_dispatcher_send(hass, IPARCELBOX_UPDATE_SIGNAL.format(body["device"]), body["data"])
 
 

@@ -4,7 +4,13 @@ from __future__ import annotations
 import asyncio
 import httpx
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.binary_sensor import (
+    BinarySensorEntity,
+    DEVICE_CLASS_OPENING,
+    DEVICE_CLASS_DOOR,
+    DEVICE_CLASS_LOCK,
+    DEVICE_CLASS_BATTERY_CHARGING
+)
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.const import PERCENTAGE, DEVICE_CLASS_BATTERY, DEVICE_CLASS_TIMESTAMP
@@ -21,10 +27,11 @@ from .const import (
     IPARCELBOX,
     IPARCELBOX_INFO,
     IPARCELBOX_UPDATE_SIGNAL,
-    SENSORS,
-    BATTERY_LEVEL,
-    ROUTER_RSSI,
-    LAST_OPENED
+    BINARY_SENSORS,
+    LOCK_STATUS,
+    LID_STATUS,
+    ASLEEP,
+    BATTERY_CHARGING,
 )
 
 from .entity import iParcelBoxEntity
@@ -41,10 +48,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     iparcelbox = data[IPARCELBOX]
     iparcelbox_info = data[IPARCELBOX_INFO]
 
-    for sensor in SENSORS:
-        _LOGGER.debug("Need to add sensor: %s", sensor)
+    for sensor in BINARY_SENSORS:
+        _LOGGER.debug("Need to add binory sensor: %s", sensor)
 
-        sensor_object = iParcelBoxStatus(hass, iparcelbox, iparcelbox_info, sensor)
+        sensor_object = iParcelBoxBinarySensor(hass, iparcelbox, iparcelbox_info, sensor)
         sensors.append(sensor_object)
 
     
@@ -55,7 +62,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 
 
-class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
+class iParcelBoxBinarySensor(iParcelBoxEntity, BinarySensorEntity):
     """Representation of a Sensor."""
 
     def __init__(self, hass, iparcelbox, iparcelbox_info, sensor):
@@ -67,13 +74,19 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
         self._iparcelbox = iparcelbox
         self._state = None
         self._device_class = None
+        self._is_on = None
         self._unique_id = f"{self._iparcelbox._mac}-{sensor}"
         self._remove_signal_update = None
         # _LOGGER.debug("Init sensor: %s", self._unique_id)
-        if sensor == BATTERY_LEVEL:
-            self._device_class = DEVICE_CLASS_BATTERY
+        if sensor == BATTERY_CHARGING:
+            self._device_class = DEVICE_CLASS_BATTERY_CHARGING
             self._state = 'Not installed'
-
+        if sensor == LID_STATUS:
+            self._device_class = DEVICE_CLASS_DOOR
+        if sensor == LOCK_STATUS:
+            self._device_class = DEVICE_CLASS_LOCK
+        if sensor == ASLEEP:
+            self._state = 'N/A'
 
     @property
     def unique_id(self):
@@ -96,12 +109,18 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
         return self._state
 
     @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement."""
-        if self._sensor == ROUTER_RSSI:
-            return PERCENTAGE
-        if self._sensor == BATTERY_LEVEL and self._state != 'Not installed':
-            return PERCENTAGE
+    def is_on(self):
+        """Return the state of the sensor."""
+        if self._sensor == BATTERY_CHARGING:
+            return True if self._state == "On" else False
+        if self._sensor == LID_STATUS:
+            return True if self._state == "closed" else False
+        if self._sensor == LOCK_STATUS:
+            return True if self._state == "unlocked" else False
+        if self._sensor == ASLEEP:
+            return self._state
+        return False
+
         
     def update(self):
         """Fetch new state data for the sensor.
@@ -129,7 +148,7 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
     @callback
     def _update_callback(self, data):
         """Call update method."""
-        # _LOGGER.debug("iParcelBox Sensor callback: %s", data["boxStatus"])
+        _LOGGER.debug("Binary Sensor: %s - %s", self._sensor, data[self._sensor])
         self._state = data[self._sensor]
         self.async_schedule_update_ha_state(True)
 
