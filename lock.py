@@ -3,11 +3,13 @@ from __future__ import annotations
 
 import asyncio
 import httpx
+import async_timeout
 
-from homeassistant.components.lock import LockEntity
+from homeassistant.components.lock import LockEntity, SUPPORT_OPEN
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.httpx_client import get_async_client
+from homeassistant.exceptions import ConfigEntryNotReady
 
 # from homeassistant.util.async import (
 #     run_callback_threadsafe, run_coroutine_threadsafe)
@@ -19,9 +21,11 @@ from .const import (
     DOMAIN,
     IPARCELBOX,
     IPARCELBOX_INFO,
+    IPARCELBOX_API,
     IPARCELBOX_UPDATE_SIGNAL,
     SENSORS,
     IS_LOCKED,
+    REQUEST_TIMEOUT,
 )
 
 from .entity import iParcelBoxEntity
@@ -38,6 +42,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry_id]
     iparcelbox = data[IPARCELBOX]
     iparcelbox_info = data[IPARCELBOX_INFO]
+    iparcelbox_api = data[IPARCELBOX_API]
 
     # for sensor in SENSORS:
     #     # _LOGGER.debug("Need to add sensor: %s", sensor)
@@ -48,29 +53,39 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     
         
         # _LOGGER.debug("Attempting to add sensor: %s", sensor_object.name)
-    lock = iParcelBoxObject(hass, iparcelbox, iparcelbox_info)
+    lock = iParcelBoxObject(hass, iparcelbox, iparcelbox_info,iparcelbox_api)
     _LOGGER.debug("Need to add lock: %s", lock._unique_id)
 
     locks.append(lock)
     
     async_add_entities(locks)
 
+def _allow_delivery(api):
+    return api.allowDelivery()
+
+def _lock_box(api):
+    return api.lockBox()
+
+def _empty_box(api):
+    return api.emptyBox()
 
 
 class iParcelBoxObject(iParcelBoxEntity, LockEntity):
     """Representation of an iParcelBox device entity."""
 
-    def __init__(self, hass, iparcelbox, iparcelbox_info):
+    def __init__(self, hass, iparcelbox, iparcelbox_info,iparcelbox_api):
         """Initialize the entity."""
         
         super().__init__(iparcelbox, iparcelbox_info)
         self.hass = hass
         # self._sensor = sensor
         self._iparcelbox = iparcelbox
+        self._api = iparcelbox_api
         # self._state = None
         self._unique_id = f"{self._iparcelbox._mac}"
         self._remove_signal_update = None
         self._lock_status = None
+        self._box_status = None
         # _LOGGER.debug("Init sensor: %s", self._unique_id)
         # if sensor == BATTERY_LEVEL:
         #     self._device_class = DEVICE_CLASS_BATTERY
@@ -103,6 +118,9 @@ class iParcelBoxObject(iParcelBoxEntity, LockEntity):
         """Indication of whether the lock is currently locked. Used to determine state"""
         return True if self._lock_status == IS_LOCKED else False
 
+    @property
+    def supported_features(self):
+        return SUPPORT_OPEN
         
     def update(self):
         """Fetch new state data for the lock.
@@ -118,14 +136,41 @@ class iParcelBoxObject(iParcelBoxEntity, LockEntity):
 
     async def async_lock(self, **kwargs):
         """Lock all or specified locks. A code to lock the lock with may optionally be specified."""
-        raise NotImplementedError()
+        _LOGGER.debug("Call async lock")
+        try:
+            with async_timeout.timeout(REQUEST_TIMEOUT):
+                result = await self.hass.async_add_executor_job(_lock_box, self._api)
+        except (asyncio.TimeoutError) as err:
+            _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", self._unique_id, err)
+            raise ConfigEntryNotReady from err    
     
     def unlock(self, **kwargs):
         """Unlock all or specified locks. A code to unlock the lock with may optionally be specified."""
+        raise NotImplementedError()
 
     async def async_unlock(self, **kwargs):
         """Unlock all or specified locks. A code to unlock the lock with may optionally be specified."""
-    
+        _LOGGER.debug("Call async unlock")
+        try:
+            with async_timeout.timeout(REQUEST_TIMEOUT):
+                result = await self.hass.async_add_executor_job(_allow_delivery, self._api)
+        except (asyncio.TimeoutError) as err:
+            _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", self._unique_id, err)
+            raise ConfigEntryNotReady from err    
+
+    def open(self, **kwargs):
+        """Open (unlatch) all or specified locks. A code to open the lock with may optionally be specified."""
+        raise NotImplementedError()
+
+    async def async_open(self, **kwargs):
+        """Open (unlatch) all or specified locks. A code to open the lock with may optionally be specified."""
+        _LOGGER.debug("Call async open")
+        try:
+            with async_timeout.timeout(REQUEST_TIMEOUT):
+                result = await self.hass.async_add_executor_job(_empty_box, self._api)
+        except (asyncio.TimeoutError) as err:
+            _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", self._unique_id, err)
+            raise ConfigEntryNotReady from err    
     
     async def async_added_to_hass(self):
         """Call when entity is added to hass."""
@@ -146,6 +191,7 @@ class iParcelBoxObject(iParcelBoxEntity, LockEntity):
         _LOGGER.debug("iParcelBox Lock callback: %s", data["lockStatus"])
         # self._state = True if data["lockStatus"] == "locked" else False
         self._lock_status = data["lockStatus"]
+        self._box_status = data["boxStatus"]
         # self._state = data["lockStatus"]
         self.async_schedule_update_ha_state(True)
 

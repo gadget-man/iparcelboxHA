@@ -109,7 +109,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     # Services
-    await _async_setup_services(hass)
+    # await _async_setup_services(hass) #not needed - lock, unlock & open services set as part of lock platform
 
     _LOGGER.debug("Setting up Platform")
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
@@ -192,7 +192,7 @@ async def async_webhook_handler(
     async_dispatcher_send(hass, IPARCELBOX_UPDATE_SIGNAL.format(body["device"]), body["data"])
 
 
-async def _async_setup_services(hass: HomeAssistant) -> None:
+async def _async_setup_services(hass: HomeAssistant) -> None:  #not needed - lock, unlock & open services set as part of lock platform
     """Service handler setup."""
 
     # _LOGGER.debug("Called setup services")   
