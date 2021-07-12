@@ -148,9 +148,10 @@ class iParcelBoxBinarySensor(iParcelBoxEntity, BinarySensorEntity):
     @callback
     def _update_callback(self, data):
         """Call update method."""
-        _LOGGER.debug("Binary Sensor: %s - %s", self._sensor, data[self._sensor])
-        self._state = data[self._sensor]
-        self.async_schedule_update_ha_state(True)
+        if (data[self._sensor]!= ''):
+            _LOGGER.debug("Binary Sensor: %s - %s", self._sensor, data[self._sensor])
+            self._state = data[self._sensor]
+            self.async_schedule_update_ha_state(True)
 
     
 # @asyncio.coroutine

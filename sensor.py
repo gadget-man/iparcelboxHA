@@ -128,10 +128,11 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
 
     @callback
     def _update_callback(self, data):
-        """Call update method."""
-        # _LOGGER.debug("iParcelBox Sensor callback: %s", data["boxStatus"])
-        self._state = data[self._sensor]
-        self.async_schedule_update_ha_state(True)
+        if (data[self._sensor]!= ''):
+            """Call update method."""
+            _LOGGER.debug("iParcelBox Sensor callback: %s", data[self._sensor])
+            self._state = data[self._sensor]
+            self.async_schedule_update_ha_state(True)
 
     
 # @asyncio.coroutine
