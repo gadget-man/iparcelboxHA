@@ -39,6 +39,7 @@ from .const import (
     CONF_SERIAL,
     CONF_WEBHOOK_URL,
     IPARCELBOX_UPDATE_SIGNAL,
+    IPARCELBOX_MESSAGE_SIGNAL,
     SERVICES,
     SERVICE_ALLOW_DELIVERY,
     SERVICE_EMPTY_BOX,
@@ -189,7 +190,10 @@ async def async_webhook_handler(
     body = await request.json()
     _LOGGER.debug("Webhook RCPT %s: %s", body["device"], body["message"])
     # _LOGGER.debug(body["data"])
+    data = {}
+    data["message"] = body["message"]
     async_dispatcher_send(hass, IPARCELBOX_UPDATE_SIGNAL.format(body["device"]), body["data"])
+    async_dispatcher_send(hass, IPARCELBOX_MESSAGE_SIGNAL.format(body["device"]), data)
 
 
 async def _async_setup_services(hass: HomeAssistant) -> None:  #not needed - lock, unlock & open services set as part of lock platform

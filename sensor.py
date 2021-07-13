@@ -21,6 +21,7 @@ from .const import (
     IPARCELBOX,
     IPARCELBOX_INFO,
     IPARCELBOX_UPDATE_SIGNAL,
+    IPARCELBOX_MESSAGE_SIGNAL,
     SENSORS,
     BATTERY_LEVEL,
     ROUTER_RSSI,
@@ -43,12 +44,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     for sensor in SENSORS:
         _LOGGER.debug("Need to add sensor: %s", sensor)
-
         sensor_object = iParcelBoxStatus(hass, iparcelbox, iparcelbox_info, sensor)
         sensors.append(sensor_object)
-
-    
-        
         # _LOGGER.debug("Attempting to add sensor: %s", sensor_object.name)
 
     async_add_entities(sensors)
@@ -121,6 +118,11 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
             IPARCELBOX_UPDATE_SIGNAL.format(self._iparcelbox._mac),
             self._update_callback,
         )
+        self._remove_signal_update = async_dispatcher_connect(
+            self.hass,
+            IPARCELBOX_MESSAGE_SIGNAL.format(self._iparcelbox._mac),
+            self._update_message_callback,
+        )
 
     async def async_will_remove_from_hass(self) -> None:
         """Call when entity will be removed from hass."""
@@ -133,6 +135,14 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
             _LOGGER.debug("iParcelBox Sensor callback: %s", data[self._sensor])
             self._state = data[self._sensor]
             self.async_schedule_update_ha_state(True)
+    
+    @callback
+    def _update_message_callback(self, data):
+        # if (data[self._sensor]!= ''):
+        """Call update method."""
+        _LOGGER.debug("iParcelBox Message callback: %s", data[self._sensor])
+        self._state = data[self._sensor]
+        self.async_schedule_update_ha_state(True)
 
     
 # @asyncio.coroutine

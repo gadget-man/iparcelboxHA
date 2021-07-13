@@ -13,6 +13,7 @@ IPARCELBOX_MAC_ADRESS = "mac"
 PLATFORMS = ["lock", "sensor", "binary_sensor"]
 
 IPARCELBOX_UPDATE_SIGNAL="iparcelbox_update_{}"
+IPARCELBOX_MESSAGE_SIGNAL="iparcelbox_message_{}"
 # IPARCELBOX_UPDATE_SIGNAL="iparcelbox_update"
 
 CONF_SERIAL = "serial"
@@ -32,6 +33,7 @@ ROUTER_RSSI = "routerRSSI"
 ROUTER_SSID = "routerSSID"
 BATTERY_LEVEL = "battery"
 BATTERY_CHARGING = "charging"
+STATUS_MESSAGE = "message"
 ASLEEP = "asleep"
 
 SENSORS = [
@@ -41,6 +43,7 @@ SENSORS = [
     ROUTER_RSSI,
     ROUTER_SSID,
     BATTERY_LEVEL,
+    STATUS_MESSAGE
 ]
 
 BINARY_SENSORS = [
