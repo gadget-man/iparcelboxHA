@@ -130,7 +130,7 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
 
     @callback
     def _update_callback(self, data):
-        if (data[self._sensor]!= ''):
+        if self._sensor in data:
             """Call update method."""
             _LOGGER.debug("iParcelBox Sensor callback: %s", data[self._sensor])
             self._state = data[self._sensor]
@@ -138,11 +138,11 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
     
     @callback
     def _update_message_callback(self, data):
-        # if (data[self._sensor]!= ''):
-        """Call update method."""
-        _LOGGER.debug("iParcelBox Message callback: %s", data[self._sensor])
-        self._state = data[self._sensor]
-        self.async_schedule_update_ha_state(True)
+        if self._sensor in data:
+            """Call update method."""
+            _LOGGER.debug("iParcelBox Message callback: %s", data[self._sensor])
+            self._state = data[self._sensor]
+            self.async_schedule_update_ha_state(True)
 
     
 # @asyncio.coroutine
