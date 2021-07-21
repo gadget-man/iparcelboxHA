@@ -99,7 +99,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         return False
 
 
-    _LOGGER.debug("Got status from device: Result: %s, Message: %s", status["result"], status["message"])
+    _LOGGER.debug("Got status from device: Result: %s, Message: %s", str(status["result"]), status["message"])
 
     iparcelbox = ConfigureiParcelBox(device, name, hostname, mac, serial)
 

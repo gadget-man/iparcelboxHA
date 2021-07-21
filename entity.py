@@ -53,6 +53,6 @@ class iParcelBoxEntity(Entity):
             "name": self._iparcelbox._name,
             "manufacturer": MANUFACTURER,
             "model": self._mac_addr,
-            "sw_version": {firmware},
+            "sw_version": firmware,
             # "model": self._doorstation_info[DOORBIRD_INFO_KEY_DEVICE_TYPE],
         }
