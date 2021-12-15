@@ -20,8 +20,6 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_MAC,
     CONF_PASSWORD,
-    CONF_USERNAME,
-    HTTP_OK,
     HTTP_UNAUTHORIZED,
     CONF_WEBHOOK_ID
 )
