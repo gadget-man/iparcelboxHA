@@ -20,9 +20,9 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_MAC,
     CONF_PASSWORD,
-    HTTP_UNAUTHORIZED,
     CONF_WEBHOOK_ID
 )
+from http import HTTPStatus
 
 from .sensor import iParcelBoxStatus
 
@@ -74,7 +74,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", hostname, err)
         raise ConfigEntryNotReady from err
     except requests.exceptions.HTTPError as err:
-        if err.response.status_code == HTTP_UNAUTHORIZED:
+        if err.response.status_code == HTTPStatus.UNAUTHORIZED:
             _LOGGER.error(
                 "Authorization rejected by iParcelBox for %s@%s", hostname, password
             )
@@ -150,7 +150,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", hostname, err)
         raise ConfigEntryNotReady from err
     except requests.exceptions.HTTPError as err:
-        if err.response.status_code == HTTP_UNAUTHORIZED:
+        if err.response.status_code == HTTPStatus.UNAUTHORIZED:
             _LOGGER.error(
                 "Authorization rejected by iParcelBox for %s@%s", hostname, password
             )
@@ -234,7 +234,7 @@ async def _async_setup_services(hass: HomeAssistant) -> None:  #not needed - loc
             raise ConfigEntryNotReady from err
             # return False
         except requests.exceptions.HTTPError as err:
-            if err.response.status_code == HTTP_UNAUTHORIZED:
+            if err.response.status_code == HTTPStatus.UNAUTHORIZED:
                 _LOGGER.error(
                     "Authorization rejected by iParcelBox for %s", iparcelbox._hostname
                 )

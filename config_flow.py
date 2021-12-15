@@ -10,6 +10,7 @@ import requests
 import asyncio
 import async_timeout
 
+from http import HTTPStatus
 from homeassistant import config_entries
 from homeassistant import core
 from homeassistant.data_entry_flow import FlowResult
@@ -20,7 +21,6 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_PASSWORD,
     CONF_MAC,
-    HTTP_UNAUTHORIZED,
 )
 
 from .const import (
@@ -129,7 +129,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         except requests.exceptions.HTTPError as err:
             _LOGGER.debug("Connection error")
             _LOGGER.debug(err.response.status_code)
-            if err.response.status_code == HTTP_UNAUTHORIZED:
+            if err.response.status_code == HTTPStatus.UNAUTHORIZED:
                 errors["base"] = "invalid_auth"
             errors["base"] = "cannot_connect"
         except OSError as err:
