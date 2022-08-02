@@ -1,0 +1,33 @@
+{
+    "config": {
+        "flow_title": "{name} ({mac})",
+        "abort": {
+            "already_configured": "Device is already configured",
+            "not_licenced": "An iParcelBox Premium subscription is required for Home Assistant integration."
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to device. Please check device is online and try again.",
+            "invalid_auth": "Invalid password, please check and try again.",
+            "not_licenced": "An iParcelBox Premium subscription is required for HomeAssistant integration.",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "title" : "iParcelBox",
+                "data": {
+                    "mac": "Mac Address",
+                    "password": "Password",
+                    "serial": "Serial Number"
+                }
+            },
+            "link": {
+                "description": "Enter device password to connect to {name}.",
+                "title" : "iParcelBox",
+                "data": {
+                    "password": "Password"
+                }
+            }
+        }
+    },
+    "title": "iParcelBox {host}"
+}

@@ -132,8 +132,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if config_updates:
         hass.config_entries.async_update_entry(entry, **config_updates)
     
-    # _LOGGER.debug("Attempting to register webhook: DOMAIN: %s, ID: %s", const.DOMAIN, webhook_id)
-    # _LOGGER.debug("Webhook URL: %s", webhook_url)
+    _LOGGER.debug("Attempting to register webhook: DOMAIN: %s, ID: %s", const.DOMAIN, webhook_id)
+    _LOGGER.debug("Webhook URL: %s", webhook_url)
 
     webhook.async_register(
         hass,
@@ -142,7 +142,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         webhook_id,
         async_webhook_handler,
     )
-    # _LOGGER.debug("Setting up webhook: %s, %s", device, webhook_url)
+    _LOGGER.debug("Setting up webhook: %s, %s", device, webhook_url)
     try:
         with async_timeout.timeout(REQUEST_TIMEOUT):
             result = await hass.async_add_executor_job(_init_iparcelbox_webhook, device, webhook_url)
@@ -160,7 +160,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Failed to setup iParcelBox webhook at %s: %s", hostname, oserr)
         raise ConfigEntryNotReady from oserr
 
-    # _LOGGER.debug("Setup webhook response: %s", result)
+    _LOGGER.debug("Setup webhook response: %s", result)
 
     return True
 
