@@ -172,14 +172,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return await self.async_step_user(user_input)
 
     async def  async_step_zeroconf(self, info):
-        #_LOGGER.debug("iParcelBox device found via ZeroConf: %s", info["name"]) 
-        _LOGGER.debug(info)
+        _LOGGER.debug("iParcelBox device found via ZeroConf: %s", info.name) 
+        #_LOGGER.debug(info)
         #TODO: IF DEVICE ALREADY REGISTERED, CHECK THAT HOST HASN'T CHANGED
         
-        hostname = info["host"]
-        serial = info["properties"]["serial"]
-        mac = info["properties"]["mac"].upper()
-        name = info["name"].replace('._iparcelbox._tcp.local.', '')
+        hostname = info.host
+        serial = info.properties["serial"]
+        mac = info.properties["mac"].upper()
+        name = info.name.replace('._iparcelbox._tcp.local.', '')
 
         await self.async_set_unique_id(mac)
         self._abort_if_unique_id_configured()
