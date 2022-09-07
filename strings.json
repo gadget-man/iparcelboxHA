@@ -28,5 +28,6 @@
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
       "not_licenced": "[%key:common::config_flow::error::not_licenced%]"
     }
-  }
+  },
+  "title": "iParcelBox"
 }

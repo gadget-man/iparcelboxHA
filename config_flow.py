@@ -142,8 +142,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
 
         if status:
-            if not status["result"]:
-                _LOGGER.debug("Status message: %s", status["message"])
+            _LOGGER.debug("Got Status: %s", status)
+            if not status.result:
+                _LOGGER.debug("Status message: %s", status.message)
                 return self.async_abort(reason="not_licenced")
 
         if errors:
