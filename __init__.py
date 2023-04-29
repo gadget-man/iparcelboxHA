@@ -111,7 +111,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # await _async_setup_services(hass) #not needed - lock, unlock & open services set as part of lock platform
 
     _LOGGER.debug("Setting up Platform")
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
 
     if CONF_WEBHOOK_ID not in entry.data:
