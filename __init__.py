@@ -134,15 +134,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     _LOGGER.debug("Attempting to register webhook: DOMAIN: %s, ID: %s", const.DOMAIN, webhook_id)
     _LOGGER.debug("Webhook URL: %s", webhook_url)
-
-    webhook.async_register(
-        hass,
-        const.DOMAIN,
-        "iParcelBox notify",
-        webhook_id,
-        async_webhook_handler,
-    )
-    _LOGGER.debug("Setting up webhook: %s, %s", device, webhook_url)
+    
+    try:
+        _LOGGER.debug("Setting up webhook: %s, %s", device, webhook_url)
+        webhook.async_register(
+            hass,
+            const.DOMAIN,
+            "iParcelBox notify",
+            webhook_id,
+            async_webhook_handler,
+        )
+    except:
+        _LOGGER.error("Unable to create new webhook, may already exist")
+    
     try:
         with async_timeout.timeout(REQUEST_TIMEOUT):
             result = await hass.async_add_executor_job(_init_iparcelbox_webhook, device, webhook_url)
