@@ -4,10 +4,10 @@ from __future__ import annotations
 import asyncio
 import httpx
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.const import PERCENTAGE, DEVICE_CLASS_BATTERY, DEVICE_CLASS_TIMESTAMP
+from homeassistant.const import PERCENTAGE
 from homeassistant.helpers.httpx_client import get_async_client
 
 # from homeassistant.util.async import (
@@ -68,7 +68,7 @@ class iParcelBoxStatus(iParcelBoxEntity, SensorEntity):
         self._remove_signal_update = None
         # _LOGGER.debug("Init sensor: %s", self._unique_id)
         if sensor == BATTERY_LEVEL:
-            self._device_class = DEVICE_CLASS_BATTERY
+            self._device_class = SensorDeviceClass.BATTERY
             self._state = 'Not installed'
 
 

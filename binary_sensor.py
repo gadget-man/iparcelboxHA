@@ -6,14 +6,11 @@ import httpx
 
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
-    DEVICE_CLASS_OPENING,
-    DEVICE_CLASS_DOOR,
-    DEVICE_CLASS_LOCK,
-    DEVICE_CLASS_BATTERY_CHARGING
+    BinarySensorDeviceClass
 )
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.const import PERCENTAGE, DEVICE_CLASS_BATTERY, DEVICE_CLASS_TIMESTAMP
+# from homeassistant.const import PERCENTAGE,  DEVICE_CLASS_TIMESTAMP
 from homeassistant.helpers.httpx_client import get_async_client
 
 # from homeassistant.util.async import (
@@ -79,12 +76,12 @@ class iParcelBoxBinarySensor(iParcelBoxEntity, BinarySensorEntity):
         self._remove_signal_update = None
         # _LOGGER.debug("Init sensor: %s", self._unique_id)
         if sensor == BATTERY_CHARGING:
-            self._device_class = DEVICE_CLASS_BATTERY_CHARGING
+            self._device_class = BinarySensorDeviceClass.BATTERY_CHARGING
             self._state = 'Not installed'
         if sensor == LID_STATUS:
-            self._device_class = DEVICE_CLASS_DOOR
+            self._device_class = BinarySensorDeviceClass.DOOR
         if sensor == LOCK_STATUS:
-            self._device_class = DEVICE_CLASS_LOCK
+            self._device_class = BinarySensorDeviceClass.LOCK
         if sensor == ASLEEP:
             self._state = 'N/A'
 

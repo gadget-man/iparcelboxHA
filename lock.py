@@ -5,7 +5,7 @@ import asyncio
 import httpx
 import async_timeout
 
-from homeassistant.components.lock import LockEntity, SUPPORT_OPEN
+from homeassistant.components.lock import LockEntityFeature
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.httpx_client import get_async_client
@@ -70,7 +70,7 @@ def _empty_box(api):
     return api.emptyBox()
 
 
-class iParcelBoxObject(iParcelBoxEntity, LockEntity):
+class iParcelBoxObject(iParcelBoxEntity, LockEntityFeature):
     """Representation of an iParcelBox device entity."""
 
     def __init__(self, hass, iparcelbox, iparcelbox_info,iparcelbox_api):
@@ -120,7 +120,7 @@ class iParcelBoxObject(iParcelBoxEntity, LockEntity):
 
     @property
     def supported_features(self):
-        return SUPPORT_OPEN
+        return LockEntityFeature.OPEN
         
     def update(self):
         """Fetch new state data for the lock.
