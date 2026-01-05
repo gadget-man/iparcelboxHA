@@ -21,14 +21,14 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_PASSWORD,
     CONF_MAC,
+    CONF_WEBHOOK_ID
 )
 
 from .const import (
     DOMAIN,
     CONF_SERIAL,
     REQUEST_TIMEOUT,
-    CONF_WEBHOOK_URL,
-    CONF_WEBHOOK_ID,
+    CONF_WEBHOOK_URL
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ def _ordered_shared_schema(
 def _init_iparcelbox_device(device):
     return device.getInfo(), device.getStatus()
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class IParcelBoxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for iParcelBox (Beta)."""
 
     VERSION = 1
