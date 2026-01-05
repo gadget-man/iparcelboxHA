@@ -18,6 +18,7 @@ IPARCELBOX_MESSAGE_SIGNAL="iparcelbox_message_{}"
 
 CONF_SERIAL = "serial"
 CONF_WEBHOOK_URL = "webhook_url"
+CONF_WEBHOOK_ID = "webhook_id"
 
 REQUEST_TIMEOUT = 10
 
