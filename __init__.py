@@ -19,9 +19,9 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
     CONF_MAC,
-    CONF_PASSWORD,
-    CONF_WEBHOOK_ID
+    CONF_PASSWORD
 )
+
 from http import HTTPStatus
 
 from .sensor import iParcelBoxStatus
@@ -36,6 +36,7 @@ from .const import (
     IPARCELBOX_INFO_KEY_FIRMWARE,
     CONF_SERIAL,
     CONF_WEBHOOK_URL,
+    CONF_WEBHOOK_ID,
     IPARCELBOX_UPDATE_SIGNAL,
     IPARCELBOX_MESSAGE_SIGNAL,
     SERVICES,
