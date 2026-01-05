@@ -57,7 +57,7 @@ def _ordered_shared_schema(
 def _init_iparcelbox_device(device):
     return device.getInfo(), device.getStatus()
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class IParcelBoxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for iParcelBox (Beta)."""
 
     VERSION = 1
