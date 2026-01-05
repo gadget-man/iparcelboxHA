@@ -27,6 +27,8 @@ from .const import (
     DOMAIN,
     CONF_SERIAL,
     REQUEST_TIMEOUT,
+    CONF_WEBHOOK_URL,
+    CONF_WEBHOOK_ID,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,7 +115,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         _LOGGER.debug("CONF_SERIAL: %s", user_input[CONF_SERIAL])
         _LOGGER.debug("CONF_MAC: %s", user_input[CONF_MAC])
         _LOGGER.debug("CONF_NAME: %s", name)
-        _LOGGER.debug("CONF_PASSWORD: %s", password)
+        # _LOGGER.debug("CONF_PASSWORD: %s", password)
 
         errors = {}
         info = {}
@@ -121,7 +123,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         device = iParcelBox(hostname, password)
         try:
-            with async_timeout.timeout(REQUEST_TIMEOUT):
+            async with async_timeout.timeout(REQUEST_TIMEOUT):
                 info, status = await self.hass.async_add_executor_job(_init_iparcelbox_device, device)
         except (asyncio.TimeoutError) as err:
             _LOGGER.error("TimeoutError connecting to iParcelBox at %s (%s)", hostname, err)
@@ -172,7 +174,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Link a config entry from discovery."""
         return await self.async_step_user(user_input)
 
-    async def  async_step_zeroconf(self, info):
+    async def  async_step_zeroconf(self, info) -> FlowResult:
         _LOGGER.debug("iParcelBox device found via ZeroConf: %s", info.name) 
         #_LOGGER.debug(info)
         #TODO: IF DEVICE ALREADY REGISTERED, CHECK THAT HOST HASN'T CHANGED
@@ -197,9 +199,37 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.context["title_placeholders"] = self.discovered_conf
         return await self.async_step_user()
+    
+    async def async_get_options_flow(self, config_entry):
+        return IParcelBoxOptionsFlowHandler(config_entry)
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
+    
+class IParcelBoxOptionsFlowHandler(config_entries.OptionsFlow):
+    def __init__(self, entry):
+        self.entry = entry
+
+    async def async_step_init(self, user_input=None):
+        if user_input is not None:
+            if user_input.get("reset_webhook"):
+                data = dict(self.entry.data)
+                data.pop(CONF_WEBHOOK_ID, None)
+                data.pop(CONF_WEBHOOK_URL, None)
+
+                self.hass.config_entries.async_update_entry(
+                    self.entry,
+                    data=data,
+                )
+
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Optional("reset_webhook", default=False): bool,
+            }),
+        )

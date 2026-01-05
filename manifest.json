@@ -2,13 +2,22 @@
   "domain": "iparcelbox",
   "name": "iParcelBox",
   "config_flow": true,
-  "version":"0.0.3",
+  "version": "0.0.18",
   "documentation": "https://github.com/gadget-man/iparcelboxHA",
-  "requirements": ["iparcelboxpy==0.0.1"],
+  "requirements": [
+    "iparcelboxpy==0.0.1"
+  ],
   "ssdp": [],
-  "zeroconf": [{"type":"_iparcelbox._tcp.local.","name":"iparcelbox-*"}],
+  "zeroconf": [
+    {
+      "type": "_iparcelbox._tcp.local.",
+      "name": "iparcelbox-*"
+    }
+  ],
   "homekit": {},
-  "dependencies": ["http"],
+  "dependencies": [
+    "http"
+  ],
   "codeowners": [
     "@gadget-man"
   ],
