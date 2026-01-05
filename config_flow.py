@@ -21,20 +21,20 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_PASSWORD,
     CONF_MAC,
+    CONF_WEBHOOK_ID
 )
 
 from .const import (
     DOMAIN,
     CONF_SERIAL,
     REQUEST_TIMEOUT,
-    CONF_WEBHOOK_URL,
-    CONF_WEBHOOK_ID,
+    CONF_WEBHOOK_URL
 )
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _discovery_schema_with_defaults(discovery_info: DiscoveryInfoType) -> vol.Schema:
+def _discovery_schema_with_defaults(discovery_info: dict[str, Any]) -> vol.Schema:
     return vol.Schema(_ordered_shared_schema(discovery_info))
 
 def _user_schema_with_defaults(user_input: dict[str, Any]) -> vol.Schema:
@@ -57,7 +57,7 @@ def _ordered_shared_schema(
 def _init_iparcelbox_device(device):
     return device.getInfo(), device.getStatus()
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class IParcelBoxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for iParcelBox (Beta)."""
 
     VERSION = 1
@@ -200,7 +200,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.context["title_placeholders"] = self.discovered_conf
         return await self.async_step_user()
     
-    async def async_get_options_flow(self, config_entry):
+    @staticmethod
+    def async_get_options_flow(config_entry):
         return IParcelBoxOptionsFlowHandler(config_entry)
 
 class CannotConnect(HomeAssistantError):
